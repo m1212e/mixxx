@@ -98,6 +98,12 @@
   <releases>
     <release version="2.7.0" type="development" date="2026-08-18" timestamp="1787048362">
       <description>
+ <ul>
+  <li>
+   Highlight harmonically compatible tracks in the library for the loaded deck's key
+   #14823
+  </li>
+ </ul>
 </description>
     </release>
     <release version="2.6.0" type="development" date="2026-08-18" timestamp="1787048362">
