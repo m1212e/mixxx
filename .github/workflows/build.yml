@@ -220,10 +220,6 @@ jobs:
             compiler_cache: ccache
             compiler_cache_path: /home/runner/.cache/ccache
             compiler_cache_id: appimage-qt6
-            # The AppImage build is fully static and produces far more ccache
-            # data than the default 2G; give it the actions/cache per-entry
-            # maximum so repeated runs can reuse the compiled objects.
-            compiler_cache_max_size: 10G
             buildenv_basepath: /home/runner/buildenv
             buildenv_script: tools/appimage_release_buildenv.sh
             artifacts_name: AppImage Linux x86_64
@@ -405,7 +401,7 @@ jobs:
         # build with debug info exceeds 2G and evicts its own objects.
         run: |
           ${{ matrix.compiler_cache }} --zero-stats
-          ${{ matrix.compiler_cache }} --max-size=${{ matrix.compiler_cache_max_size || '2G' }}
+          ${{ matrix.compiler_cache }} --max-size=2G
         if: runner.os != 'windows'
 
       # Remove unused pre-installed software as the runner runs out of space otherwise
@@ -845,10 +841,10 @@ jobs:
           arch: ${{ matrix.variant.arch }}
           build-bundle: false
           upload-artifact: false
-          # The Flatpak caches (~1.4 GB per arch) are only saved on main to stay
-          # within the 10 GB quota. Other branches and pull requests can still
-          # restore the main cache.
-          save-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          # The Flatpak caches (~1.4 GB per arch) are only saved by branch pushes
+          # (main and the release branches) to stay within the 10 GB quota.
+          # Pull requests can still restore the cache of their base branch.
+          save-cache: ${{ github.event_name == 'push' && github.ref_type == 'branch' }}
 
       - name: "Create Flatpak bundle"
         run: |
